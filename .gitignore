@@ -1,0 +1,58 @@
+# Magento 2 gitignore
+
+# Generated files
+/generated/*
+!/generated/.htaccess
+
+# Cache and logs
+/var/cache/*
+/var/log/*
+/var/page_cache/*
+/var/session/*
+/var/tmp/*
+/var/view_preprocessed/*
+!/var/.htaccess
+
+# Vendor directory
+/vendor/*
+!/vendor/.htaccess
+
+# Media files (optional - uncomment if you want to ignore uploaded media)
+# /pub/media/*
+# !/pub/media/.htaccess
+
+# Static files
+/pub/static/*
+!/pub/static/.htaccess
+
+# Development files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Composer
+/auth.json
+
+# Node modules (if using frontend build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local 

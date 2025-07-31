@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+    <module name="Magebit_PageListWidget" setup_version="1.0.0">
+        <sequence>
+            <module name="Magento_Cms"/>
+            <module name="Magento_Widget"/>
+        </sequence>
+    </module>
+</config> 

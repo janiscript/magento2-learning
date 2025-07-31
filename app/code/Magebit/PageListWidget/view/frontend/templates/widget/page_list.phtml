@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var \Magebit\PageListWidget\Block\Widget\PageList $block
+ * @var \Magento\Framework\Escaper $escaper
+ */
+?>
+
+<?php if ($block->hasPages()): ?>
+<div class="magebit-page-list-widget" data-role="page-list-widget">
+    <?php if ($block->hasTitle()): ?>
+        <h3 class="page-list-title">
+            <?= $escaper->escapeHtml($block->getWidgetTitle()) ?>
+        </h3>
+    <?php endif; ?>
+    
+    <ul class="page-list-items" role="list">
+        <?php foreach ($block->getCmsPages() as $page): ?>
+            <li class="page-list-item" role="listitem">
+                <a href="<?= $escaper->escapeUrl($block->getPageUrl($page)) ?>" 
+                   class="page-list-link"
+                   title="<?= $escaper->escapeHtmlAttr($page->getTitle()) ?>">
+                    <?= $escaper->escapeHtml($page->getTitle()) ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?> 

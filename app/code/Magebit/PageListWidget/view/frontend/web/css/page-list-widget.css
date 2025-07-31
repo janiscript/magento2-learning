@@ -1,0 +1,90 @@
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * CMS Page List Widget Styles
+ */
+
+.magebit-page-list-widget {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.magebit-page-list-widget .page-list-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #333;
+    line-height: 1.3;
+}
+
+.magebit-page-list-widget .page-list-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.magebit-page-list-widget .page-list-item {
+    margin: 0;
+    padding: 0;
+}
+
+.magebit-page-list-widget .page-list-link {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: #006bb4;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.magebit-page-list-widget .page-list-link:hover,
+.magebit-page-list-widget .page-list-link:focus {
+    background-color: #006bb4;
+    color: #ffffff;
+    border-color: #006bb4;
+    text-decoration: none;
+    outline: 2px solid #0056b3;
+    outline-offset: 2px;
+}
+
+.magebit-page-list-widget .page-list-link:active {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .magebit-page-list-widget .page-list-title {
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+    }
+    
+    .magebit-page-list-widget .page-list-link {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .magebit-page-list-widget .page-list-link {
+        border-width: 2px;
+    }
+    
+    .magebit-page-list-widget .page-list-link:hover,
+    .magebit-page-list-widget .page-list-link:focus {
+        outline-width: 3px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .magebit-page-list-widget .page-list-link {
+        transition: none;
+    }
+} 

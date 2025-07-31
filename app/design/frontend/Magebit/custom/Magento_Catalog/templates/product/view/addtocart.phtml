@@ -1,0 +1,113 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var $block \Magento\Catalog\Block\Product\View
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+// Get product from registry or block
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$product = $registry->registry('current_product');
+
+if (!$product) {
+    $product = $block->getProduct();
+}
+
+$isInStock = false;
+$stockQty = 0;
+
+if ($product && $product->getExtensionAttributes() && $product->getExtensionAttributes()->getStockItem()) {
+    $stockItem = $product->getExtensionAttributes()->getStockItem();
+    $isInStock = $stockItem->getIsInStock();
+    $stockQty = (int)$stockItem->getQty();
+} else {
+    // Fallback using stock registry
+    $stockRegistry = $objectManager->get('\Magento\CatalogInventory\Api\StockRegistryInterface');
+    if ($product) {
+        $stockItem = $stockRegistry->getStockItem($product->getId());
+        $isInStock = $stockItem->getIsInStock();
+        $stockQty = (int)$stockItem->getQty();
+    }
+}
+?>
+
+<div class="product-add-form">
+    <form data-product-sku="<?= $product ? $escaper->escapeHtmlAttr($product->getSku()) : '' ?>"
+          action="<?= $product ? $escaper->escapeUrl($block->getSubmitUrl($product)) : '' ?>" method="post"
+          id="product_addtocart_form"<?= $block->getBlockId() && $product ? ' data-role="add-to-cart-form" data-product-sku="' . $escaper->escapeHtml($product->getSku()) . '"' : '' ?>>
+        
+        <input type="hidden" name="product" value="<?= $product ? $escaper->escapeHtmlAttr($product->getId()) : '' ?>" />
+        <input type="hidden" name="selected_configurable_option" value="" />
+        <input type="hidden" name="related_product" id="related-products-field" value="" />
+        <?= $block->getBlockHtml('formkey') ?>
+        
+        <div class="quantity-stock-section">
+            <div class="field qty">
+                <div class="quantity-selector">
+                    <button type="button" class="qty-decrease" onclick="decreaseQty()" title="<?= $escaper->escapeHtmlAttr(__('Decrease Quantity')) ?>">
+                    </button>
+                    <input type="number" 
+                           name="qty" 
+                           id="qty" 
+                           maxlength="12" 
+                           value="1" 
+                           title="<?= $escaper->escapeHtmlAttr(__('Qty')) ?>" 
+                           class="input-text qty" 
+                           data-validate="{required:true,'validate-greater-than-zero':true}" 
+                           readonly />
+                    <button type="button" class="qty-increase" onclick="increaseQty()" title="<?= $escaper->escapeHtmlAttr(__('Increase Quantity')) ?>">
+                    </button>
+                </div>
+            </div>
+            
+            <div class="stock-notice">
+                <?php if ($isInStock): ?>
+                    <span class="stock-available">
+                        <svg class="stock-icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path fill="#22c55e" d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                        </svg>
+                        <?= $escaper->escapeHtml(__('IN STOCK')) ?>
+                        <?= $stockQty > 0 ? $escaper->escapeHtml($stockQty . ' items available') : '' ?>
+                    </span>
+                <?php else: ?>
+                    <span class="stock-unavailable">
+                        <svg class="stock-icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path fill="#ef4444" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        <?= $escaper->escapeHtml(__('OUT OF STOCK')) ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button type="submit" 
+                    title="<?= $escaper->escapeHtmlAttr(__('Add to Cart')) ?>" 
+                    class="action primary tocart"
+                    id="product-addtocart-button">
+                <span><?= $escaper->escapeHtml(__('Add to Cart')) ?></span>
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+function decreaseQty() {
+    const qtyInput = document.getElementById('qty');
+    let currentQty = parseInt(qtyInput.value);
+    if (currentQty > 1) {
+        qtyInput.value = currentQty - 1;
+    }
+}
+
+function increaseQty() {
+    const qtyInput = document.getElementById('qty');
+    let currentQty = parseInt(qtyInput.value);
+    const maxQty = <?= $stockQty ?: 999 ?>;
+    if (currentQty < maxQty) {
+        qtyInput.value = currentQty + 1;
+    }
+}
+</script> 

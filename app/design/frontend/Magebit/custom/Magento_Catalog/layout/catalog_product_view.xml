@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ */
+-->
+<page layout="1column" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="product.info.main">
+            <!-- Move reviews above price -->
+            <block class="Magento\Catalog\Block\Product\View" name="product.info.review" 
+                   template="product/view/review.phtml" before="product.price.final"/>
+            
+            <!-- Add custom product attributes section right after price -->
+            <block class="Magento\Catalog\Block\Product\View" name="product.info.attributes.custom" 
+                   template="product/view/attributes.phtml" after="product.info.price"/>
+            
+            <!-- Custom quantity and stock section -->
+            <referenceBlock name="product.info.addtocart">
+                <block class="Magento\Catalog\Block\Product\View" name="product.info.addtocart.custom" 
+                       template="product/view/addtocart.phtml"/>
+            </referenceBlock>
+            
+            <!-- Related products section -->
+            <block class="Magento\Catalog\Block\Product\ProductList\Related" name="catalog.product.related.custom" 
+                   template="product/view/related.phtml" after="product.info.addtocart"/>
+        </referenceContainer>
+        
+        <!-- Remove product details tabs section -->
+        <referenceContainer name="product.info.details" remove="true" />
+        
+        <!-- Remove default related products block -->
+        <referenceBlock name="catalog.product.related" remove="true" />
+        
+        <!-- Custom CSS for product page -->
+        <referenceContainer name="head.additional">
+            <block class="Magento\Framework\View\Element\Template" name="product.page.custom.css">
+                <arguments>
+                    <argument name="template" xsi:type="string">css/product-page.phtml</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page> 

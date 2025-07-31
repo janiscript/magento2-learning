@@ -1,0 +1,80 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var $block \Magento\Catalog\Block\Product\View
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+// Get product from registry or block
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$product = $registry->registry('current_product');
+
+if (!$product) {
+    $product = $block->getProduct();
+}
+?>
+
+<div class="product-attributes-custom">
+    <ul class="attributes-list">
+        <?php 
+        // Get product dimensions (custom attribute)
+        $dimensions = $product->getCustomAttribute('dimensions');
+        if ($dimensions && $dimensions->getValue()): ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Dimensions:')) ?></strong>
+                <?= $escaper->escapeHtml($dimensions->getValue()) ?>
+            </li>
+        <?php else: ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Dimensions:')) ?></strong>
+                18" × 10" × 6"
+            </li>
+        <?php endif; ?>
+
+        <?php 
+        // Get product color
+        $color = $product->getCustomAttribute('color');
+        if ($color && $color->getValue()): ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Colour:')) ?></strong>
+                <?= $escaper->escapeHtml($color->getValue()) ?>
+            </li>
+        <?php else: ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Colour:')) ?></strong>
+                Grey/Red
+            </li>
+        <?php endif; ?>
+
+        <?php 
+        // Get product material
+        $material = $product->getCustomAttribute('material');
+        if ($material && $material->getValue()): ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Material:')) ?></strong>
+                <?= $escaper->escapeHtml($material->getValue()) ?>
+            </li>
+        <?php else: ?>
+            <li class="attribute-item">
+                <strong><?= $escaper->escapeHtml(__('Material:')) ?></strong>
+                Burlap, Nylon, Polyester
+            </li>
+        <?php endif; ?>
+    </ul>
+    
+    <div class="product-description-short">
+        <?php 
+        $shortDescription = $product->getShortDescription();
+        if ($shortDescription): ?>
+            <p class="description-text">
+                <?= $escaper->escapeHtml($shortDescription) ?>
+            </p>
+        <?php else: ?>
+            <p class="description-text">
+                With the Fusion Backpack strapped on, every trek is an adventure - even a bus ride to work.
+            </p>
+        <?php endif; ?>
+    </div>
+</div> 

@@ -1,0 +1,124 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Related
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+$relatedProducts = $block->getItems();
+?>
+
+<?php if ($relatedProducts && count($relatedProducts) > 0): ?>
+<div class="related-products-section">
+    <h2 class="related-products-title"><?= $escaper->escapeHtml(__('Related Products')) ?></h2>
+    
+    <div class="related-products-grid">
+        <?php foreach ($relatedProducts as $product): ?>
+            <div class="related-product-card" data-product-id="<?= $escaper->escapeHtmlAttr($product->getId()) ?>">
+                <div class="product-image-container">
+                    <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>" class="product-image-link">
+                        <?php
+                        $imageHelper = $this->helper(\Magento\Catalog\Helper\Image::class);
+                        $productImage = $imageHelper->init($product, 'category_page_list')->setImageFile($product->getImage())->resize(240, 240);
+                        ?>
+                        <img src="<?= $productImage->getUrl() ?>" 
+                             alt="<?= $escaper->escapeHtmlAttr($product->getName()) ?>"
+                             class="product-image" />
+                    </a>
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-name">
+                        <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>">
+                            <?= $escaper->escapeHtml($product->getName()) ?>
+                        </a>
+                    </h3>
+                    
+                    <div class="product-rating">
+                        <?php 
+                        $reviewSummary = $product->getRatingSummary();
+                        $reviewCount = $product->getReviewsCount() ?: 0;
+                        $starsCount = 0;
+                        
+                        if ($reviewSummary && $reviewSummary->getRatingSummary()): 
+                            $starsCount = ceil($reviewSummary->getRatingSummary() / 20);
+                        endif;
+                        ?>
+                        <div class="rating-stars">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <span class="star <?= $i <= $starsCount ? 'filled' : 'empty' ?>">★</span>
+                            <?php endfor; ?>
+                        </div>
+                        <?php if ($reviewCount > 0): ?>
+                            <span class="reviews-count">
+                                <?= $escaper->escapeHtml($reviewCount) ?> 
+                                <?= $reviewCount == 1 ? __('Review') : __('Reviews') ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="product-price">
+                        <?= $block->getProductPrice($product) ?>
+                    </div>
+                    
+                    <div class="product-actions">
+                        <button type="button" 
+                                class="btn-add-to-cart" 
+                                data-product-id="<?= $escaper->escapeHtmlAttr($product->getId()) ?>"
+                                data-product-url="<?= $escaper->escapeUrl($block->getAddToCartUrl($product)) ?>">
+                            <?= $escaper->escapeHtml(__('Add to Cart')) ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<script type="text/javascript">
+require(['jquery'], function($) {
+    $(document).ready(function() {
+        $('.btn-add-to-cart').on('click', function(e) {
+            e.preventDefault();
+            
+            var button = $(this);
+            var productId = button.data('product-id');
+            var productUrl = button.data('product-url');
+            
+            // Show loading state
+            button.addClass('loading').text('<?= $escaper->escapeJs(__('Adding...')) ?>');
+            
+            $.ajax({
+                url: productUrl,
+                type: 'POST',
+                data: {
+                    product: productId,
+                    qty: 1,
+                    form_key: $('input[name="form_key"]').val()
+                },
+                success: function(response) {
+                    button.removeClass('loading').addClass('success').text('<?= $escaper->escapeJs(__('Added!')) ?>');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(function() {
+                        button.removeClass('success').text('<?= $escaper->escapeJs(__('Add to Cart')) ?>');
+                    }, 2000);
+                    
+                    // Trigger mini cart update
+                    $('body').trigger('contentUpdated');
+                },
+                error: function() {
+                    button.removeClass('loading').addClass('error').text('<?= $escaper->escapeJs(__('Error')) ?>');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(function() {
+                        button.removeClass('error').text('<?= $escaper->escapeJs(__('Add to Cart')) ?>');
+                    }, 2000);
+                }
+            });
+        });
+    });
+});
+</script>
+<?php endif; ?> 

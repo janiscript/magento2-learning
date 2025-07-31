@@ -1,0 +1,69 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var $block \Magento\Catalog\Block\Product\View
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+// Get product from registry
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$registry = $objectManager->get('\Magento\Framework\Registry');
+$product = $registry->registry('current_product');
+
+if (!$product) {
+    // Fallback: try to get product from block
+    $product = $block->getProduct();
+}
+
+$reviewSummary = null;
+$reviewCount = 0;
+
+if ($product) {
+    $reviewSummary = $product->getRatingSummary();
+    $reviewCount = $product->getReviewsCount();
+}
+?>
+
+<div class="product-reviews-summary">
+    <?php if ($product && $reviewSummary && $reviewSummary->getRatingSummary()): ?>
+        <div class="rating-summary">
+            <?php 
+            $ratingPercentage = $reviewSummary->getRatingSummary();
+            $starsCount = ceil($ratingPercentage / 20); // Convert percentage to 5-star scale
+            ?>
+            <div class="rating-stars">
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <span class="star <?= $i <= $starsCount ? 'filled' : 'empty' ?>">★</span>
+                <?php endfor; ?>
+            </div>
+            
+            <div class="reviews-actions">
+                <?php if ($reviewCount > 0): ?>
+                    <a href="#reviews" class="reviews-link">
+                        <?= $escaper->escapeHtml($reviewCount) ?> 
+                        <?= $reviewCount == 1 ? __('Review') : __('Reviews') ?>
+                    </a>
+                <?php endif; ?>
+                
+                <button type="button" class="action add-review-btn" onclick="location.href='#review-form'">
+                    <?= $escaper->escapeHtml(__('Add Your Review')) ?>
+                </button>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="no-reviews">
+            <div class="rating-stars">
+                <?php for ($i = 1; $i <= 5; $i++): ?>
+                    <span class="star empty">★</span>
+                <?php endfor; ?>
+            </div>
+            <div class="reviews-actions">
+                <span class="no-reviews-text"><?= $escaper->escapeHtml(__('No reviews yet')) ?></span>
+                <button type="button" class="action add-review-btn" onclick="location.href='#review-form'">
+                    <?= $escaper->escapeHtml(__('Add Your Review')) ?>
+                </button>
+            </div>
+        </div>
+    <?php endif; ?>
+</div> 

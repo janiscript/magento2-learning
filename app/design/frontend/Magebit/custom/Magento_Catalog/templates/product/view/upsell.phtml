@@ -1,0 +1,78 @@
+<?php
+/**
+ * Copyright © Magebit, LLC. All rights reserved.
+ * 
+ * @var $block \Magento\Catalog\Block\Product\ProductList\Upsell
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+$upsellProducts = $block->getItemCollection();
+?>
+
+<?php if ($upsellProducts && count($upsellProducts) > 0): ?>
+<div class="upsell-products-section">
+    <h3 class="upsell-title"><?= $escaper->escapeHtml(__('We found other products you might like!')) ?></h3>
+    
+    <div class="upsell-products-grid">
+        <?php foreach ($upsellProducts as $product): ?>
+            <div class="upsell-product-item">
+                <div class="product-image-wrapper">
+                    <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>" class="product-image-link">
+                        <?php
+                        $imageHelper = $this->helper(\Magento\Catalog\Helper\Image::class);
+                        $productImage = $imageHelper->init($product, 'category_page_list')->setImageFile($product->getImage())->resize(150, 150);
+                        ?>
+                        <img src="<?= $productImage->getUrl() ?>" 
+                             alt="<?= $escaper->escapeHtmlAttr($product->getName()) ?>"
+                             class="product-image" />
+                    </a>
+                </div>
+                
+                <div class="product-details">
+                    <h4 class="product-name">
+                        <a href="<?= $escaper->escapeUrl($product->getProductUrl()) ?>">
+                            <?= $escaper->escapeHtml($product->getName()) ?>
+                        </a>
+                    </h4>
+                    
+                    <div class="product-rating">
+                        <?php 
+                        $reviewSummary = $product->getRatingSummary();
+                        $reviewCount = $product->getReviewsCount();
+                        if ($reviewSummary && $reviewSummary->getRatingSummary()): 
+                            $starsCount = ceil($reviewSummary->getRatingSummary() / 20);
+                        else:
+                            $starsCount = 0;
+                            $reviewCount = 0;
+                        endif;
+                        ?>
+                        <div class="rating-stars small">
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                <span class="star <?= $i <= $starsCount ? 'filled' : 'empty' ?>">★</span>
+                            <?php endfor; ?>
+                        </div>
+                        <?php if ($reviewCount > 0): ?>
+                            <span class="reviews-count">
+                                <?= $escaper->escapeHtml($reviewCount) ?> 
+                                <?= $reviewCount == 1 ? __('Review') : __('Reviews') ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="product-price">
+                        <?= $block->getProductPrice($product) ?>
+                    </div>
+                    
+                    <div class="product-actions">
+                        <button type="button" 
+                                class="action view-product-btn"
+                                onclick="location.href='<?= $escaper->escapeUrl($product->getProductUrl()) ?>'">
+                            <?= $escaper->escapeHtml(__('View Product')) ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?> 
